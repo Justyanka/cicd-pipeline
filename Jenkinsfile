@@ -27,7 +27,7 @@ pipeline {
         stage('build_docker_image') {
             steps {
                 script {
-                    sh 'echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --pasword-stdin'
+                    sh 'echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin'
                     if (env.BRANCH_NAME == 'main' ) {
                        sh '''
                           docker build -t nodemain:v1.0 .
