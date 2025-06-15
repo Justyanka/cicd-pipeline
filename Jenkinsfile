@@ -9,6 +9,10 @@ pipeline {
         pollSCM('H/1 * * * *')
     }
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('justyanka-dokcerhub')
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -23,25 +27,21 @@ pipeline {
         stage('build_docker_image') {
             steps {
                 script {
+                    sh 'echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --pasword-stdin'
                     if (env.BRANCH_NAME == 'main' ) {
                        sh '''
                           docker build -t nodemain:v1.0 .
-                          Containers=$(docker ps -a --filter "ancestor=nodemain:v1.0" -q)
-                          if [ "$Containers" ]; then 
-                              docker rm -f $Containers  
-                          fi
-                          docker run -d --expose 3000 -p 3000:3000 nodemain:v1.0
+                          docker push nodemain:v1.0                          
                        '''
+                       build job: 'Deploy_to_main', wait: false
                     } else if (env.BRANCH_NAME == 'dev') {
                        sh '''
                           docker build -t nodedev:v1.0 .
-                          Containers=$(docker ps -a --filter "ancestor=nodedev:v1.0" -q)
-                          if [ "$Containers" ]; then
-                             docker rm -f $Containers
-                          fi
-                          docker run -d --expose 3001 -p 3001:3000 nodedev:v1.0
+                          docker push nodedev:v1.0
                        '''
+                       build job: 'Deploy_to_dev', wait: false
                     }
+                    sh 'docker logout'
                 }
             }
         }
