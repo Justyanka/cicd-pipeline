@@ -24,6 +24,11 @@ pipeline {
                 sh 'npm test'
             }
         }
+        stage('Hadolint') {
+            steps {
+                sh 'docker run --rm -i hadolint/hadolint < ./Dockerfile'
+            }
+        }
         stage('build_docker_image') {
             steps {
                 script {
