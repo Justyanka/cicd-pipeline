@@ -43,13 +43,11 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'main') {
-                       def vulnerabilities = sh(script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress 
-                                             justyanka/nodemain:v1.0", returnStdout: true).trim()
+                       def vulnerabilities = sh(script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress justyanka/nodemain:v1.0", returnStdout: true).trim()
                                              echo "Vulnerability Report:\n${vulnerabilities}"  
                     }
                     else if (env.BRANCH_NAME == 'dev'){
-                        def vulnerabilities = sh(script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress 
-                                             justyanka/nodedev:v1.0", returnStdout: true).trim()
+                        def vulnerabilities = sh(script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress justyanka/nodedev:v1.0", returnStdout: true).trim()
                                              echo "Vulnerability Report:\n${vulnerabilities}"  
                     }                   
                 }
